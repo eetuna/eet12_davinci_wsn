@@ -21,7 +21,7 @@ bool debug_needle_print=false;
 #include <tf/LinearMath/Vector3.h>
 #include <tf/LinearMath/QuadWord.h>
 #include <eigen3/Eigen/src/Geometry/Transform.h>
-
+#include <davinci_kinematics/davinci_kinematics.h>
 //compute desired gripper frame from desired needle pose w/rt tissue
 // use with: int  ik_solve(Eigen::Affine3d const& desired_hand_pose);
 
@@ -35,7 +35,7 @@ const int GRASP_W_NEEDLE_NEGATIVE_GRIPPER_Y=-1;
 const int GRASP_W_NEEDLE_POSITIVE_GRIPPER_Z=1; //grab needle w/ needle z-axis parallel to gripper z-axis
 const int GRASP_W_NEEDLE_NEGATIVE_GRIPPER_Z=-1; // needle z antiparallel to gripper z
 const double DEFAULT_NEEDLE_RADIUS = 0.0254/2.0; // for 1" diam needle
-const double DEFAULT_NEEDLE_AXIS_HT= DEFAULT_NEEDLE_RADIUS/2.0; // height of needle z-axis above tissue
+const double DEFAULT_NEEDLE_AXIS_HT= DEFAULT_NEEDLE_RADIUS/sqrt(2.0); // height of needle z-axis above tissue
 const int NSAMPS_DRIVE_PLAN = 21; // decide how many samples of grasp poses to compute for needle drive over 180 deg
 //phi grab at 0.0--> grab in middle of arc
 const double DEFAULT_PHI_GRAB = 0.0;// M_PI/2.0; //puts tail of needle in middle of gripper--really not feasible
@@ -49,6 +49,9 @@ public:
    void set_needle_radius(double r) {needle_radius_ = r; }
    void set_needle_axis_ht (double h) {needle_axis_ht_ = h; }
    void set_psi_needle_axis_tilt_wrt_tissue(double tilt) {psi_needle_axis_tilt_wrt_tissue_ = tilt; }
+   void set_kvec (Eigen::Vector3d kvec) { kvec_needle_ = kvec; }
+   void set_needle_origin (Eigen::Vector3d O_needle) { O_needle_ = O_needle; }
+   
     // result depends on how the gripper is grasping the needle.  This has a default
     // grasp transform, changeable with "set" functions
     //the next 4 fncs change params of the default needle grasp transform
@@ -74,13 +77,27 @@ public:
     void set_affine_needle_frame_wrt_gripper_frame(Eigen::Affine3d affine)
          {affine_needle_frame_wrt_gripper_frame_ = affine; }
 
+    void set_affine_lcamera_to_psm_one(Eigen::Affine3d affine)
+         {default_affine_lcamera_to_psm_one_ = affine; }   
+    void set_affine_lcamera_to_psm_two(Eigen::Affine3d affine)
+         {default_affine_lcamera_to_psm_two_ = affine; }    
+
     void compute_tissue_frame_wrt_camera(Eigen::Vector3d entrance_pt,
         Eigen::Vector3d exit_pt, Eigen::Vector3d tissue_normal);
     //main fnc: given tissue entrance pt, exit pt and surface normal (w/rt camera frame)
     // compute a sequence of gripper poses (w/rt camera frame) for needle driving
     void compute_needle_drive_gripper_affines(vector <Eigen::Affine3d> &gripper_affines_wrt_camera);
-    
+    void simple_compute_needle_drive_gripper_affines(vector <Eigen::Affine3d> &gripper_affines);
+    void simple_horiz_kvec_motion(Eigen::Vector3d O_needle, double r_needle, double kvec_yaw, vector <Eigen::Affine3d> &gripper_affines_wrt_camera);
+    void simple_horiz_kvec_motion_psm2(Eigen::Vector3d O_needle, double r_needle, double kvec_yaw, vector <Eigen::Affine3d> &gripper_affines_wrt_camera);
+
+
+    //test fnc--just computes a simple gripper path:
+    void simple_test_gripper_motion(double x, double y, double z, double r,vector <Eigen::Affine3d> &gripper_affines_wrt_camera);
+
     void write_needle_drive_affines_to_file(vector <Eigen::Affine3d> &gripper_affines_wrt_camera);
+    void write_psm2_needle_drive_affines_to_file(Eigen::Affine3d gripper_affine_psm1, double squeeze_cmd, vector <Eigen::Affine3d> &psm2_gripper_affines_wrt_camera);
+
     double vers(double phi) { return (1.0-cos(phi)); } 
     
     //some utility functions:
@@ -110,7 +127,7 @@ private:
     //next two transforms are fixed during needle driving; they
     // describe how the needle is held by the gripper
     Eigen::Affine3d affine_grasp_frame_wrt_gripper_frame_; 
-    Eigen::Vector3d O_needle_frame_wrt_grasp_frame_;
+    Eigen::Vector3d O_needle_frame_wrt_grasp_frame_, O_needle_; //O_needle is arbitrary frame...e.g. psm1_base
     Eigen::Matrix3d R_needle_frame_wrt_grasp_frame_;
     Eigen::Matrix3d R0_N_wrt_G_; 
     Eigen::Vector3d O0_N_wrt_G_;
@@ -145,6 +162,7 @@ private:
     //  directly above the mid-point between entrance and exit pt; will remain constant during
     // needle driving (in all frames)
     Eigen::Vector3d O_needle_wrt_tissue_; //= (dist_entrance_to_exit_, 0, needle_axis_ht_)
+    Eigen::Vector3d kvec_needle_; // axis of rotation, normal of needle; postive rotation = insertion
     Eigen::Affine3d affine_init_needle_frame_wrt_tissue_; //starting pose of needle
     // variables that evolve during needle driving:    
     // during driving, insertion angle goes from 0 to pi (could shorten this)
@@ -157,7 +175,14 @@ private:
     Eigen::Affine3d affine_needle_frame_wrt_camera_;  //this varies during needle driving    
     //this is the desired result: where should the gripper be to drive the needle
     // follows from affine_needle_frame_wrt_camera_ and grasp transforms
-    Eigen::Affine3d affine_gripper_frame_wrt_camera_frame_;     
+    Eigen::Affine3d affine_gripper_frame_wrt_camera_frame_;    
+    
+    Davinci_fwd_solver davinci_fwd_solver_; //instantiate a forward-kinematics solver    
+    Davinci_IK_solver ik_solver_;
+    //default camera transform: should find actual tf by listening, but this
+    // hard-coded default is useful for simple tests
+    Eigen::Affine3d default_affine_lcamera_to_psm_one_;    
+    Eigen::Affine3d default_affine_lcamera_to_psm_two_;      
 };
 
 #endif
