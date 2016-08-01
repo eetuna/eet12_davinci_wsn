@@ -44,6 +44,7 @@
 <build_depend>std_msgs</build_depend>
 <build_depend>davinci_kinematics</build_depend>
 <build_depend>davinci_traj_streamer</build_depend>
+<build_depend>davinci_joint_publisher</build_depend>
 <build_depend>eigen</build_depend>
 <build_depend>sensor_msgs</build_depend>
 <build_depend>trajectory_msgs</build_depend>
@@ -65,6 +66,7 @@
 <run_depend>cwru_action</run_depend>
 <run_depend>cwru_davinci_srv</run_depend>
 <run_depend>message_runtime</run_depend>
+ <run_depend>davinci_joint_publisher</run_depend>
   <!-- The export tag contains other, unspecified, tags -->
   <export>
     <!-- You can specify that this package is a metapackage here: -->

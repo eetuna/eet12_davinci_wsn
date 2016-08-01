@@ -9,7 +9,7 @@
 // The action message can be found in: .../baxter_traj_streamer/action/traj.action
 // Automated header generation creates multiple headers for message I/O
 // These are referred to by the root name (traj) and appended name (Action)
-#include<davinci_traj_streamer/trajAction.h>
+#include <davinci_traj_streamer/trajAction.h>
 #include <trajectory_msgs/JointTrajectoryPoint.h>
 #include <davinci_kinematics/davinci_kinematics.h>
 #include <std_msgs/Float64.h>
