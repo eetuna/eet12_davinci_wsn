@@ -2,7 +2,8 @@
 <robot name="dvrk_psm" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <!-- Macros -->
-  <xacro:include filename="$(find dvrk_model)/model/wsn_psm.urdf.xacro"/>
+  <xacro:include filename="$(find dvrk_model)/model/wsn_psm_w_needles.urdf.xacro"/>
+  <!--<xacro:include filename="$(find dvrk_model)/model/wsn_psm.urdf.xacro"/>-->
 
   <link name="world">
       <origin xyz="0.0 0.0 0.0"/>  

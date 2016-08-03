@@ -28,10 +28,11 @@
          <pose>-0.015 -0.010 0.800 0 0 0</pose>
     </include>
 
-    <!--<include>
+    <include>
         <uri>model://needle_r</uri>
          <pose>0.005 -0.001 0.820 1.57 0 -1.57</pose>
-    </include>-->
+    </include>
+
 
 
 

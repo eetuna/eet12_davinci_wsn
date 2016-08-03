@@ -20,6 +20,11 @@ int main(int argc, char** argv)
 
     ROS_INFO("main: instantiating an object of type NeedlePlanner");
     NeedlePlanner needlePlanner;  
+
+    double tilt;
+    cout<< "enter tilt of needle z-axis w/rt tissue: ";
+    cin>> tilt;
+    needlePlanner.set_psi_needle_axis_tilt_wrt_tissue(tilt);
     //compute the tissue frame in camera coords, based on point-cloud selections:
     needlePlanner.compute_tissue_frame_wrt_camera(entrance_pt,exit_pt, tissue_normal);
     //optional: manually set the needle grasp pose, else accept default from constructor

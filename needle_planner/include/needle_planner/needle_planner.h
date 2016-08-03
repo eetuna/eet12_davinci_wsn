@@ -5,6 +5,7 @@
  * Created Feb 24, 2016
  */
 
+//bool debug_needle_print=true;
 bool debug_needle_print=false;
 #ifndef NEEDLE_PLANNER_H
 #define	NEEDLE_PLANNER_H

@@ -7,7 +7,7 @@ Your description goes here
 ## Running tests/demos
 start gazebo: 
 
-`roslaunch dvrk_model wsn_davinci_gazebo.launch`
+``
 
 start trajectory server:
 
@@ -15,6 +15,8 @@ start trajectory server:
 
 navigate to the "davinci_playfiles" directory:
 `roscd davinci_playfiles`
+cd catkin_ws/src/eet12_davinci_wsn/davinci_playfiles/
+
 
 Move the robot to retract the grippers to a reasonable starting position:
 `rosrun playfile_reader playfile_cartspace retract.csp`
