@@ -18,5 +18,7 @@ e.g., enter: x=0, y=0, z=0.12, yaw= 0.7
 Can then try the result by running:
 rosrun playfile_reader playfile_cameraspace gripper_poses_in_camera_coords.csp
 
-
+Newman
+roslaunch dvrk_model derlin_davinci_gazebo.launch
+cd catkin_ws/src/eet12_davinci_wsn/needle_planner/src
 

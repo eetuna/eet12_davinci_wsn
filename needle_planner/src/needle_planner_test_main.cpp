@@ -13,11 +13,12 @@ int main(int argc, char** argv)
 
     ros::NodeHandle nh; // create a node handle; need to pass this to the class constructor
     Eigen::Vector3d entrance_pt,exit_pt,tissue_normal;
-    tissue_normal<<0,0,-1; //antiparallel to optical axis
-    entrance_pt<<0.0,0.1,0.1; //100mm under camera; slightly forward, to avoid jnt lims should be OK
-    exit_pt<<0.01,0.1,0.1; // exit pt is shifted along camera-frame +x axis relative to entrance pt
-    vector <Eigen::Affine3d> gripper_affines_wrt_camera;  //put answers here  
+    tissue_normal << 0, 0, -1; //antiparallel to optical axis
+    entrance_pt << -0.1, 0.05, 0.1; //100mm under camera; slightly forward, to avoid jnt lims should be OK
+    exit_pt << -0.09, 0.05, 0.1; // exit pt is shifted along camera-frame +x axis relative to entrance ptvector <Eigen::Affine3d> gripper_affines_wrt_camera;  //put answers here  
 
+    vector <Eigen::Affine3d> gripper_affines_wrt_camera;
+    
     ROS_INFO("main: instantiating an object of type NeedlePlanner");
     NeedlePlanner needlePlanner;  
 
