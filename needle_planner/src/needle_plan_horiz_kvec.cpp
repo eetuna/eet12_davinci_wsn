@@ -255,10 +255,15 @@ int main(int argc, char** argv) {
      */
     Eigen::Affine3d affine_pose;
     vector <Eigen::Affine3d> gripper_affines_wrt_camera;  //put answers here  
-    
+    int countT = 0;
     ROS_INFO("entering loop...");
     while (ros::ok()) {
-        if (g_got_new_points) {
+        if (countT == 1){
+            cout << "count: " << countT << endl;
+            break;
+        }
+        
+        if (!g_got_new_points ) {
             g_got_new_points = false;
         //compute O_needle from entry and exit points:
         O_needle = 0.5 * (g_O_entry_point + g_O_exit_point);
@@ -267,13 +272,21 @@ int main(int argc, char** argv) {
 
         in_to_out_vec = g_O_exit_point - g_O_entry_point;
         //vector from entry to exit is 90-deg away from needle z-axis, so add pi/2
+        //cout << "atan2 result:" << atan2(in_to_out_vec(1), in_to_out_vec(0)) << endl;
+        //cout << in_to_out_vec(1) << endl;
+        //cout << in_to_out_vec(0) << endl;
+        //cout << in_to_out_vec << endl;
         kvec_yaw = atan2(in_to_out_vec(1), in_to_out_vec(0))+M_PI/2.0;
         ROS_INFO("using kvec_yaw = %f",kvec_yaw);
 
             //compute the tissue frame in camera coords, based on point-cloud selections:
+        cout << "O_needle:" << O_needle << endl;
+        cout << "r_needle:" << r_needle << endl;
+        //cout << "gripper_affines_wrt_camera" << gripper_affines_wrt_camera << endl;
 
             needlePlanner.simple_horiz_kvec_motion(O_needle, r_needle, kvec_yaw, gripper_affines_wrt_camera);
             int nposes = gripper_affines_wrt_camera.size();
+            cout << "nposes: " << nposes << endl;
             ROS_INFO("computed %d gripper poses w/rt camera", nposes);
 
             for (int i = 0; i < nposes; i++) {
@@ -286,6 +299,7 @@ int main(int argc, char** argv) {
         
         ros::spinOnce();
         ros::Duration(0.01).sleep();
+        countT++;
     }
     return 0;
 }

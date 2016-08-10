@@ -73,11 +73,8 @@
 // and this grasp has needle bvec_needle || +/- bvec_gripper, then the needle tip 
 // tip would also lie along the 
 
-bool debug_needle_print2 = false;
-bool debug_needle_print3 = true;
+
 NeedlePlanner::NeedlePlanner() {
-
-
     ROS_INFO("needle planner constructor: initializations");
     needle_radius_ = DEFAULT_NEEDLE_RADIUS;
     needle_axis_ht_ = DEFAULT_NEEDLE_AXIS_HT;
@@ -477,15 +474,6 @@ void NeedlePlanner::simple_horiz_kvec_motion(Eigen::Vector3d O_needle, double r_
     int nsolns=0;
     int nphi=0;
     cout<<"nphi: ";
-
-    if(debug_needle_print2)
-    {
-        cout << "bvec: " << bvec.transpose() << endl;
-        cout << "tvec: " << tvec.transpose() << endl;
-        cout << "tip_pos: " << tip_pos.transpose() << endl;
-        cout << "R0: " << R0 << endl;
-        //cout << "bvec: " << bvec << endl;
-    }
     for (double phi = 0.0; phi< M_PI; phi+=dphi) {
         //need to rotate gripper frame about camera-frame x-axis;
         // DO want to describe this as equiv rotation about gripper-frame z-axis
@@ -518,30 +506,10 @@ void NeedlePlanner::simple_horiz_kvec_motion(Eigen::Vector3d O_needle, double r_
         Vectorq7x1 q_vec_ik;
         q_vec_ik = ik_solver_.get_soln();
         //cout << "qvecIK after computation" << q_vec_ik.transpose() << endl;
-        if (debug_needle_print2)
-        {
-            cout << "start printing\n" << endl;
-            cout << "\n nphi \n" << nphi << endl;
-            cout << "R:\n" << R << endl;
-            cout << "tip_pos:\n" << tip_pos.transpose() << endl;
-            cout << "des_gripper1_wrt_base_rotation\n" << des_gripper1_wrt_base.linear() << endl;
-            cout << "des_gripper1_wrt_base_translation\n" << des_gripper1_wrt_base.translation().transpose() << endl;
-            cout << "ik_result" << q_vec_ik.transpose() << endl;
-
-        }
         if (ik_result) 
         {  nsolns++;
-           cout<<nphi<<",";
-           if(debug_needle_print2){
-
-            cout << "\n qvecIK after computation" << q_vec_ik.transpose() << endl;
-
-            }
-
-            if(debug_needle_print3){
-                            cout << "affine_gripper_frame_wrt_camera_frame_Rotation" << affine_gripper_frame_wrt_camera_frame_.linear()<< endl;
-            cout << "affine_gripper_frame_wrt_camera_frame_translation" << affine_gripper_frame_wrt_camera_frame_.translation().transpose()<< endl;
-            }
+           cout<<nphi<<",\n";
+           cout << "\n qvecIK after computation" << q_vec_ik.transpose() << endl;
            //cout<<":  found IK; nsolns = "<<nsolns<<endl;
            gripper_affines_wrt_camera.push_back(affine_gripper_frame_wrt_camera_frame_);
         }
