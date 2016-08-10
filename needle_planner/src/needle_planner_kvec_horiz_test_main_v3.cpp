@@ -17,6 +17,9 @@
 #include <geometry_msgs/Polygon.h>
 const int g_npts_good=32;
 
+
+//Eigen::Vector3d g_O_entry_point;
+
 Eigen::Affine3d g_affine_lcamera_to_psm_one, g_affine_lcamera_to_psm_two; //, affine_gripper_wrt_base;
 Eigen::Affine3d g_psm1_start_pose,g_psm2_start_pose;
 Eigen::Affine3d transformTFToEigen(const tf::Transform &t) {
@@ -137,6 +140,7 @@ void init_poses() {
     ROS_INFO("psm2 gripper start pose:");
     cout << g_psm2_start_pose.linear() << endl;
     cout << g_psm2_start_pose.translation().transpose() << endl;      
+
     
 }
 
@@ -204,6 +208,13 @@ int main(int argc, char** argv) {
     needlePlanner.set_affine_lcamera_to_psm_one(g_affine_lcamera_to_psm_one);
     needlePlanner.set_affine_lcamera_to_psm_two(g_affine_lcamera_to_psm_two);   
     
+
+
+    g_O_entry_point(0) = 0.0;
+    g_O_entry_point(1) = 0.0;
+    g_O_entry_point(2) = 0.12;
+    g_got_new_entry_point = true;
+
     while (ros::ok()) {
         if (g_got_new_entry_point) {
             g_got_new_entry_point = false;
