@@ -62,6 +62,7 @@ int main(int argc, char** argv)
             O_needle(2)-= needle_height_above_tissue;
             cout<<"O_needle = "<<O_needle.transpose()<<endl;
             cout<<"O_exit_pt = "<<O_exit_pt.transpose()<<endl;
+             cout<<"kvec_yaw = "<<kvec_yaw<<endl;
         gripper_affines_wrt_camera.clear();
 
         needlePlanner.simple_horiz_kvec_motion(O_needle, r_needle, kvec_yaw, gripper_affines_wrt_camera);

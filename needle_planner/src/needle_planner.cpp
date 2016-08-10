@@ -74,7 +74,8 @@
 // tip would also lie along the 
 
 bool debug_needle_print2 = false;
-bool debug_needle_print3 = true;
+//bool debug_needle_print2 = true;
+bool debug_needle_print3 = false;
 NeedlePlanner::NeedlePlanner() {
 
 
@@ -486,6 +487,7 @@ void NeedlePlanner::simple_horiz_kvec_motion(Eigen::Vector3d O_needle, double r_
         cout << "R0: " << R0 << endl;
         //cout << "bvec: " << bvec << endl;
     }
+    int successCount = 0;
     for (double phi = 0.0; phi< M_PI; phi+=dphi) {
         //need to rotate gripper frame about camera-frame x-axis;
         // DO want to describe this as equiv rotation about gripper-frame z-axis
@@ -515,6 +517,7 @@ void NeedlePlanner::simple_horiz_kvec_motion(Eigen::Vector3d O_needle, double r_
         //cout<<"phi = "<<phi;
         //#ik_solver_.ik_solve(des_gripper1_wrt_base)
         bool ik_result = ik_solver_.ik_solve(des_gripper1_wrt_base);
+
         Vectorq7x1 q_vec_ik;
         q_vec_ik = ik_solver_.get_soln();
         //cout << "qvecIK after computation" << q_vec_ik.transpose() << endl;
@@ -530,7 +533,9 @@ void NeedlePlanner::simple_horiz_kvec_motion(Eigen::Vector3d O_needle, double r_
 
         }
         if (ik_result) 
-        {  nsolns++;
+        {  
+            nsolns++;
+            successCount++;
            cout<<nphi<<",";
            if(debug_needle_print2){
 
@@ -545,10 +550,13 @@ void NeedlePlanner::simple_horiz_kvec_motion(Eigen::Vector3d O_needle, double r_
            //cout<<":  found IK; nsolns = "<<nsolns<<endl;
            gripper_affines_wrt_camera.push_back(affine_gripper_frame_wrt_camera_frame_);
         }
+
+        
         nphi++;
         //else cout<<";  NO IK"<<endl;
      
     }
+    cout << "successCount: " << successCount << endl;
     cout<<endl;
 }
 

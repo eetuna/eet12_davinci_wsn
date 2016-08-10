@@ -255,14 +255,16 @@ int main(int argc, char** argv) {
      */
     Eigen::Affine3d affine_pose;
     vector <Eigen::Affine3d> gripper_affines_wrt_camera;  //put answers here  
-    int countT = 0;
+    //int countT = 0;
     ROS_INFO("entering loop...");
     while (ros::ok()) {
+        /*
         if (countT == 1){
             cout << "count: " << countT << endl;
             break;
         }
-        
+        countT++;
+        */
         if (!g_got_new_points ) {
             g_got_new_points = false;
         //compute O_needle from entry and exit points:
@@ -299,7 +301,6 @@ int main(int argc, char** argv) {
         
         ros::spinOnce();
         ros::Duration(0.01).sleep();
-        countT++;
     }
     return 0;
 }
